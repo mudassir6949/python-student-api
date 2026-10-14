@@ -1,29 +1,12 @@
 
-pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-                echo 'Source code checked out successfully'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh '''
-                    python3 -m venv .venv
-                    .venv/bin/python -m pip install --upgrade pip
-                    .venv/bin/python -m pip install -r requirements.txt
-                '''
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'Python Student API build started'
-            }
-        }
+stage('Install Dependencies') {
+    steps {
+        sh '''
+            docker run --rm \
+              -v "$WORKSPACE:/app" \
+              -w /app \
+              python:3.13-slim \
+              sh -c "python -m pip install --upgrade pip && python -m pip install -r requirements.txt"
+        '''
     }
 }
